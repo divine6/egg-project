@@ -17,11 +17,15 @@ module.exports = appInfo => {
 
     // add your middleware config here
     config.middleware = [];
-
     // add your user config here
     const userConfig = {
         // myAppName: 'egg',
-    };
+        security: {
+            csrf: {
+                enable: false,
+            },
+        }
+    }
     userConfig.mysql = {
         // 单数据库信息配置
         client: {
@@ -32,7 +36,7 @@ module.exports = appInfo => {
             // 用户名
             user: 'root',
             // 密码
-            password: 'root',
+            password: 'qy5201314',
             // 数据库名
             database: 'meizu',
             dateStrings: true, // 处理时间格式
