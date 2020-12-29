@@ -9,6 +9,18 @@ const plugin: EggPlugin = {
   mysql: {
     enable: true,
     package: 'egg-mysql',
+  },
+  bcrypt: {
+    enable: true,
+    package: 'egg-bcrypt'
+  },
+  jwt: {
+    enable: true,
+    package: 'egg-jwt',
+  },
+  cors: {
+    enable: true,
+    package: 'egg-cors',
   }
 };
 

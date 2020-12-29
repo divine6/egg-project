@@ -5,19 +5,31 @@ export default (appInfo: EggAppInfo) => {
 
   // override config from framework / plugin
   // use for cookie sign key, should change to your own and keep security
-  config.keys = appInfo.name + '_1609149740520_2406';
+  config.keys = appInfo.name + '18009666754';
 
   // add your egg config in here
   config.middleware = [];
 
   // add your special config in here
+  config.bcrypt = {
+    saltRounds: 10 // default 10
+  }
+  config.jwt = {
+    secret: '18009666754'
+  }
+  config.security = {
+    csrf: {
+      enable: false,
+      ignoreJSON: true,
+    },
+    domainWhiteList: ["http://localhost:8080"]
+  }
+  config.cors = {
+    origin: '*',
+    allowMethods: 'GET,POST'
+  }
   const userConfig = {
     sourceUrl: `https://github.com/eggjs/examples/tree/master/${appInfo.name}`,
-    security: {
-      csrf: {
-        enable: false,
-      },
-    },
     mysql: {
       // 单数据库信息配置
       client: {
