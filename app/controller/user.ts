@@ -42,13 +42,18 @@ export default class UserController extends Controller {
         }
     }
     async login() {
-        const { ctx, service } = this
+        const { ctx, service, app, config } = this
         const { account, password } = ctx.request.body
         let user = await service.user.findUserByAccount(account)
         if (user.length > 0) {
-            const pwd_hash = await ctx.genHash(password)
-            let res = await service.user.regist({ account, password: pwd_hash })
-            if (res.affectedRows === 1) ctx.helper.success(ctx)
+            const pwd_hash = user[0].password
+            let checked: boolean = await ctx.compare(password, pwd_hash)
+            if (checked) {
+                const token = app.jwt.sign({ account }, config.jwt.secret, { expiresIn: '60m' })
+                ctx.helper.success(ctx, token)
+            } else {
+                ctx.helper.error(ctx, 1, '密码不正确')
+            }
         } else {
             ctx.helper.error(ctx, 1, '账号不存在')
         }
