@@ -1,31 +1,35 @@
 
-import CaptchaController from './captcha'
-export default class UserController extends CaptchaController {
+import { Controller } from 'egg'
+
+import { createUserRule, updataeUserRule, registRule, loginRule } from '../rules/user'
+
+const svgCaptcha = require('svg-captcha')
+export default class UserController extends Controller {
     async list() {
         const { ctx, service } = this;
-        const { pageNum, pageSize } = ctx.query
-        let pNum: number = parseInt(pageNum)
-        let pSize: number = parseInt(pageSize)
-        const data = await service.user.list({ pNum, pSize })
-        ctx.helper.respond(ctx, 200, 'success', data)
+        const data = await service.user.list(ctx.query)
+        const res = await service.user.count()
+        ctx.helper.respond(ctx, 200, 'success', { list: data, total: res[0].total })
     }
     async create() {
         const { ctx, service } = this
-        const user = ctx.request.body
-        let data = await service.user.findUserByAccount(user.account)
+        const body = ctx.request.body
+        ctx.validate(createUserRule, body)
+        const data = await service.user.findUserByAccount({ account: body.account })
         if (data && data.length > 0) {
             ctx.helper.respond(ctx, 500, '用户已存在',)
         } else {
-            let res = await service.user.create(user)
-            ctx.helper.respond(ctx, 200, 'success', res.insertId)
+            let res = await service.user.create(body)
+            ctx.helper.respond(ctx, 200, 'success', { user_id: res.insertId })
         }
     }
     async update() {
         const { ctx, service } = this
-        const user = ctx.request.body
-        let data = await service.user.findUserById(user.user_id)
+        const body = ctx.request.body
+        ctx.validate(updataeUserRule, body)
+        const data = await service.user.findUserById({ user_id: body.user_id })
         if (data && data.length > 0) {
-            await service.user.update(user)
+            await service.user.update(body)
             ctx.helper.respond(ctx, 200, 'success',)
         } else {
             ctx.helper.respond(ctx, 500, '用户不存在',)
@@ -33,15 +37,39 @@ export default class UserController extends CaptchaController {
     }
     async delete() {
         const { ctx, service } = this
+        ctx.validate({ user_id: 'number' }, ctx.request.body)
         const user_id = ctx.request.body.user_id
-        await service.user.delete(user_id)
-        ctx.helper.respond(ctx, 200, 'success',)
+        await service.user.delete({ user_id })
+        ctx.helper.respond(ctx, 200, 'success')
+    }
+    async getCaptcha() {
+        const { ctx } = this
+        const captcha = svgCaptcha.create({
+            size: 4,
+            fontSize: 50,
+            ignoreChars: 'Ooli',
+            width: 100,
+            height: 40,
+            noise: 3,
+            color: true,
+            background: '#cc9966',
+        });
+        ctx.session.captcha = captcha.text;
+        ctx.response.type = 'image/svg+xml';
+        ctx.body = captcha.data;
+    }
+    async checkCaptcha() {
+        const { ctx } = this
+        const session = ctx.session.captcha.toLowerCase()
+        const capthcha = ctx.request.body.captcha.toLowerCase()
+        return session === capthcha
     }
     async regist() {
         const { ctx, service } = this
+        ctx.validate(registRule, ctx.request.body)
         const { account, password } = ctx.request.body
-        let user = await service.user.findUserByAccount(account)
-        if (user.length > 0) {
+        const data = await service.user.findUserByAccount(account)
+        if (data.length > 0) {
             ctx.helper.respond(ctx, 500, '账号已存在',)
         } else {
             const pwd_hash = await ctx.genHash(password)
@@ -51,6 +79,7 @@ export default class UserController extends CaptchaController {
     }
     async login() {
         const { ctx, service, app, config } = this
+        ctx.validate(loginRule, ctx.request.body)
         const { account, password } = ctx.request.body
         if (this.checkCaptcha()) {
             let user = await service.user.findUserByAccount(account)

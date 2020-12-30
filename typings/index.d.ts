@@ -8,5 +8,6 @@ declare module 'egg' {
     }
     interface IHelper {
         respond: (ctx: any, code: CodeType, message: string, data?: any) => void;
+        pageQuery: (params: { pageNum: string, pageSize: string }) => { limit: number, offset: number };
     }
 };

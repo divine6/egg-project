@@ -1,27 +1,28 @@
 import { Service } from 'egg'
-
 export default class UserService extends Service {
-    async list({ pNum, pSize }) {
-        return await this.app.mysql.select('user', { limit: pSize, offset: pNum * pSize - pSize });
+    async list(parmas: any) {
+        return await this.app.mysql.select('user', this.ctx.helper.pageQuery(parmas));
     }
-    async create(user: any) {
-        return await this.app.mysql.insert('user', user)
+    async count() {
+        return await this.app.mysql.query('select count(*) as total from user;');
     }
-    async update(user: any) {
-        return await this.app.mysql.update('user', user, { where: { id: user.id } })
+    async findUserById(params: any) {
+        return await this.app.mysql.select('user', { where: params, limit: 1, })
     }
-    async delete(id: number) {
-        return await this.app.mysql.delete('user', { id })
+    async findUserByAccount(params: any) {
+        return await this.app.mysql.select('user', { where: params, limit: 1, })
     }
-    async findUserById(user_id: number) {
-        return await this.app.mysql.select('user', { where: { user_id }, limit: 1, },)
+    async regist(params: any) {
+        return await this.app.mysql.insert('user', params)
     }
-    async findUserByAccount(account: string) {
-        return await this.app.mysql.select('user', { where: { account }, limit: 1, },)
+    async delete(params: any) {
+        return await this.app.mysql.delete('user', params)
     }
-    async regist(user: any) {
-        return await this.app.mysql.insert('user', user)
+    async update(params: any) {
+        return await this.app.mysql.update('user', params, { where: { user_id: params.user_id } })
     }
-
+    async create(params: any) {
+        return await this.app.mysql.insert('user', params)
+    }
 }
 

@@ -14,6 +14,7 @@ import 'egg-schedule';
 import 'egg-static';
 import 'egg-jsonp';
 import 'egg-view';
+import 'egg-validate';
 import 'egg-mysql';
 import 'egg-bcrypt';
 import 'egg-jwt';
@@ -33,6 +34,7 @@ declare module 'egg' {
     static?: EggPluginItem;
     jsonp?: EggPluginItem;
     view?: EggPluginItem;
+    validate?: EggPluginItem;
     mysql?: EggPluginItem;
     bcrypt?: EggPluginItem;
     jwt?: EggPluginItem;
