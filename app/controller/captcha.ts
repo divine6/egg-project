@@ -1,5 +1,4 @@
 
-
 import { Controller } from 'egg'
 
 const svgCaptcha = require('svg-captcha')
@@ -24,12 +23,7 @@ export default class CaptchaController extends Controller {
     async checkCaptcha() {
         const { ctx } = this
         const session = ctx.session.captcha.toLowerCase()
-        const { capthcha } = ctx.request.body
-        if (session === capthcha.toLowerCase()) {
-            ctx.body = '验证码正确'
-        } else {
-            ctx.body = '验证码错误'
-        }
+        const capthcha = ctx.request.body.captcha.toLowerCase()
+        return session === capthcha
     }
-
 }

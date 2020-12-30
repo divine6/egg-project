@@ -7,7 +7,6 @@ declare module 'egg' {
         jwt: any
     }
     interface IHelper {
-        success: (ctx: any, data?: any) => void;
-        error: (ctx: any, code: CodeType = CodeType.error, message: string) => void;
+        respond: (ctx: any, code: CodeType, message: string, data?: any) => void;
     }
 };

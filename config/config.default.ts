@@ -29,7 +29,6 @@ export default (appInfo: EggAppInfo) => {
     allowMethods: 'GET,POST'
   }
   const userConfig = {
-    sourceUrl: `https://github.com/eggjs/examples/tree/master/${appInfo.name}`,
     mysql: {
       // 单数据库信息配置
       client: {
