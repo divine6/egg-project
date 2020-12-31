@@ -8,8 +8,7 @@ export default class UserController extends Controller {
     async list() {
         const { ctx, service } = this;
         const data = await service.user.list(ctx.query)
-        const res = await service.user.count()
-        ctx.helper.respond(ctx, 200, 'success', { list: data, total: res[0].total })
+        ctx.helper.respond(ctx, 200, 'success', data)
     }
     async create() {
         const { ctx, service } = this
@@ -20,14 +19,14 @@ export default class UserController extends Controller {
             ctx.helper.respond(ctx, 500, '用户已存在',)
         } else {
             let res = await service.user.create(body)
-            ctx.helper.respond(ctx, 200, 'success', { user_id: res.insertId })
+            ctx.helper.respond(ctx, 200, 'success', { id: res.insertId })
         }
     }
     async update() {
         const { ctx, service } = this
         const body = ctx.request.body
         ctx.validate(updataeUserRule, body)
-        const data = await service.user.findUserById({ user_id: body.user_id })
+        const data = await service.user.findUserById({ id: body.id })
         if (data && data.length > 0) {
             await service.user.update(body)
             ctx.helper.respond(ctx, 200, 'success',)
@@ -37,9 +36,9 @@ export default class UserController extends Controller {
     }
     async delete() {
         const { ctx, service } = this
-        ctx.validate({ user_id: 'number' }, ctx.request.body)
-        const user_id = ctx.request.body.user_id
-        await service.user.delete({ user_id })
+        ctx.validate({ id: 'number' }, ctx.request.body)
+        const id = ctx.request.body.id
+        await service.user.delete({ id })
         ctx.helper.respond(ctx, 200, 'success')
     }
     async getCaptcha() {

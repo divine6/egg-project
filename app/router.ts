@@ -15,6 +15,7 @@ export default (app: Application) => {
     router.post('/api/user/delete', controller.user.delete);
 
     router.get('/api/product/list', controller.product.list);
+    router.get('/api/product/detail', controller.product.detail);
     router.post('/api/product/create', controller.product.create);
     router.post('/api/product/update', controller.product.update);
     router.post('/api/product/delete', controller.product.delete);

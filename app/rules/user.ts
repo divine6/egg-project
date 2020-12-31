@@ -12,7 +12,7 @@ export const createUserRule = {
     level: { type: 'enum', values: ['1', '2', '3'], required: false },
 };
 export const updataeUserRule = {
-    user_id: 'number',
+    id: 'number',
     ...createUserRule
 };
 export const registRule = {
